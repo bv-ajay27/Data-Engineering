@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import boto3
 
 # Define S3 bucket and paths
-BUCKET_NAME = "your-bucket-name"
+BUCKET_NAME = "my-allproject-logs"
 LOG_FILE_PATH = "financial_risk_processing.log"
 LOG_S3_PATH = f"logs/{LOG_FILE_PATH}"
 
@@ -71,3 +71,4 @@ send_failure_email = EmailOperator(
 # Define task dependencies
 run_pyspark_task >> upload_logs_task >> send_success_email
 run_pyspark_task >> send_failure_email
+
