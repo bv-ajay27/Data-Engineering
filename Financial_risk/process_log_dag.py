@@ -12,9 +12,9 @@ from airflow.operators.bash import BashOperator
 log = logging.getLogger(__name__)
 
 # Define S3 bucket and paths
-BUCKET_NAME = "my-allproject-logs"
+bucket_name = "my-allproject-logs"
 LOG_S3_PATH = "logs/financial_risk_processing.log"
-LOCAL_LOG_FILE = "/opt/airflow/logs/financial_risk_pipeline/run_pyspark_script/latest/0.log"
+local_log_file_path = "/opt/airflow/logs/financial_risk_pipeline/run_pyspark_script/latest/0.log"
 
 # Function to upload logs to S3
 @task
@@ -22,10 +22,10 @@ def upload_logs_to_s3(local_log_file_path: str, s3_path: str, bucket_name: str):
     """
     Uploads a specified local log file to an S3 bucket.
     """
-    log.info(f"Uploading log file from {local_log_file_path} to s3://{bucket_name}/{s3_path}")
+    log.info(f"Uploading log file from {local_log_file_path} to s3://{bucket_name}/{LOG_S3_PATH}")
     try:
         s3_client = boto3.client('s3')
-        s3_client.upload_file(local_log_file_path, bucket_name, s3_path)
+        s3_client.upload_file(local_log_file_path, bucket_name, LOG_S3_PATH)
         log.info("Log file uploaded successfully.")
     except Exception as e:
         log.error(f"Failed to upload log file: {e}")
@@ -60,7 +60,7 @@ def financial_risk_pipeline():
     # The --master local[*] is for a local Spark session on the same machine.
     run_pyspark_task = BashOperator(
         task_id='run_pyspark_script',
-        bash_command='spark-submit --master local[*] /path/to/pyspark_script.py',
+        bash_command='spark-submit/path/to/financial_risk.py',
     )
 
     # Task 2: Upload Logs to S3
@@ -77,3 +77,4 @@ def financial_risk_pipeline():
 
 # Instantiate the DAG
 financial_risk_pipeline()
+
